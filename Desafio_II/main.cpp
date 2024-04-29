@@ -7,7 +7,7 @@ using namespace std;
 
 int main(){
 
-    int lineas=3;
+    int lineas=2;
 
     network red1(lineas);
 

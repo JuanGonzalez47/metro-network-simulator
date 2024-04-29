@@ -43,7 +43,7 @@ network::network(int _numLines){
 
             // cout<<"Nota: si la estacion sera de transferencia ingrese en el apartado (Nombre) el siguiente caracter  \T  de lo contrario ingrese el correspondiente nombre "<<endl;
 
-            cout<<"estacion "<<cont++<<" Nombre : ";cin>>nameStation;
+            cout<<"Nombre de la estacion "<<cont++<<" : ";cin>>nameStation;
             cout<<endl;
 
 
@@ -57,7 +57,7 @@ network::network(int _numLines){
 
                 for(int j=1;j<(elemLine[i]-1);j+=2){
 
-                    cout<<"ingrese el tiempo que tardara el tren en llegar de la estacion |"<<matrixNetwork[i][j-1]<<"| a |"<<matrixNetwork[i][j+1]<<"| :";
+                    cout<<"ingrese el tiempo que tardara el tren en llegar de la estacion "<<matrixNetwork[i][j-1]<<" -> "<<matrixNetwork[i][j+1]<<" : ";
                     cin>>timeStation;cout<<endl;
                     matrixNetwork[i][j]=timeStation;
 
@@ -70,15 +70,13 @@ network::network(int _numLines){
 void network::printNetwork(){
     cout << "RED METRO\n\n";
 
-    cout<< "           Estaciones        "<<endl;
-
     for(int i=0;i<numLines;i++) {
 
         cout<<"Linea "<<i+1<<" | ";
         for (int j=0;j<elemLine[i];j+=2) {
             cout << matrixNetwork[i][j] << " | ";
         }
-        cout << endl;
+        cout<<endl;
     }
 }
 
