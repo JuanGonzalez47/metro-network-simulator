@@ -12,6 +12,7 @@ private:
     string **matrixNetwork;
     int numLines;
     int *elemLine;
+    string *ptr_estations_transfer = new string;
 
 public:
 
@@ -27,6 +28,13 @@ public:
     void amountStations();
     void printNetwork();
 
+    //errores
+    struct does_not_possible_create_tranfer_estation{};
+    struct is_impossible_repeat_estation{};
+    struct is_impossible_to_create_line{};
+    is_impossible_to_create_line error3;
+    is_impossible_repeat_estation error2;
+    does_not_possible_create_tranfer_estation error1;
 };
 
 
