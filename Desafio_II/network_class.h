@@ -1,32 +1,33 @@
-#include<string>
-using namespace std;
-
-
 #ifndef NETWORK_CLASS_H
 #define NETWORK_CLASS_H
+
+#include<line_class.h>
 
 class network {
 
 private:
 
-    string **matrixNetwork;
-    int numLines;
+    line *matrixNetwork;
+    unsigned int numLines;
     int *elemLine;
-    string *ptr_estations_transfer = new string;
 
 public:
 
     //constructor
 
 
-    network(int _numLines);
+    //destructor
+
 
     //metodos
+    network(unsigned int numLines_);
+    void inicialization_red();
     void addLine();
     void deleteLine();
     void amountline();
     void amountStations();
     void printNetwork();
+
 
     //errores
     struct does_not_possible_create_tranfer_estation{};
