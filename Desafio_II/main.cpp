@@ -7,14 +7,9 @@ using namespace std;
 
 int main(){
 
-    int lineas=2;
-
-    network red1(lineas);
-
-    red1.printNetwork();
-
-
-
+    network red(3);
+    red.inicialization_red();
+    red.printNetwork();
 
     return 0;
 }
