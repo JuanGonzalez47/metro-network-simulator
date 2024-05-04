@@ -8,7 +8,9 @@ using namespace std;
 int main(){
 
     network red(3);
-    red.inicialization_red();
+    virtual_network_class *red_aux;
+
+    red.inicialization_red(red_aux);
     red.printNetwork();
 
     return 0;
