@@ -30,7 +30,7 @@ public:
     void printNetwork();
     bool line_on_red(string name_line);
     bool normal_estation_on_red(string name_estation, unsigned int num_estations, unsigned int numLines, bool valid, string name_estation_same_line) override;
-
+  
     //geters
     unsigned int get_numLines () override;
     string get_name_lines() override;
