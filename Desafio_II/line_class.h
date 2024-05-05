@@ -29,12 +29,30 @@ public:
 
     //metodos
     void inicialization_line(unsigned int num_estations, string name_line, unsigned int m, virtual_network_class *red_aux, unsigned int cont_line);
+    void addStation();
+    void amountStations();
+    int findStation();
+    void deleteStation();
+    void timeStations();
+
+    //geters
     string get_name_line();
     string* get_ptr_line();
     unsigned int get_num_estations();
     bool get_object_valid();
-    void add_estation();
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif // LINE_CLASS_H
 
