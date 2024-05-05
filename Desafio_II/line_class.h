@@ -26,6 +26,7 @@ public:
     string get_name_line();
     string* get_ptr_line();
     unsigned int get_num_estations();
+    void timeStations();
 };
 
 #endif // LINE_CLASS_H
