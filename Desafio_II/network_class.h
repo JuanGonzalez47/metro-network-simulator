@@ -34,7 +34,7 @@ public:
     //geters
     unsigned int get_numLines () override;
     string get_name_lines() override;
-
+    line* getMatrixnetwork();
 
 };
 
