@@ -20,17 +20,17 @@ public:
 
     //destructor
 
-
     //metodos
     void inicialization_red(virtual_network_class *red_aux);
-    void addLine();
-    void deleteLine();
+    void addLine(virtual_network_class *red_aux);
+    void deleteLine(string name_line);
     void amountline();
     void amountStations();
     void printNetwork();
     bool line_on_red(string name_line);
     bool normal_estation_on_red(string name_estation, unsigned int num_estations, unsigned int numLines, bool valid, string name_estation_same_line) override;
-  
+    void find_name_line(string name_line_transfer) override;
+
     //geters
     unsigned int get_numLines () override;
     string get_name_lines() override;
