@@ -6,8 +6,8 @@
 
 using namespace std;
 
-//metodos clase line
 
+//constructores
 line::line()
 {
 //constructor por defecto para la reserva de memoria de matrixNetwork
@@ -18,11 +18,16 @@ line::line(unsigned int num_estations_, string name_line_)
 {
     num_estations = num_estations_;
     name_line = name_line_;
-    //creamos el arreglo con la linea, se le suma 16, ya que la primera estara ocupada con el nombre de la fila y el resto son la expectativa de estaciones
-    ptr_line = new string [((num_estations+15)*2)-1];
+
+    //creamos el arreglo con la linea se le suma 29  ya que esa es la expectativa de creciemineto contando los tiempos
+    //y se le multiplica por dos  al numero estaciones  para añadir los timepos entre cada estacion
+    tam_ptr_line=(((num_estations_)*2-1)+29);
+    ptr_line = new string [tam_ptr_line];
     object_valid = true;
 
 }
+
+//metodos clase line
 
 void line::inicialization_line(unsigned int num_estations, string name_line, unsigned int m, virtual_network_class *red_aux, unsigned int cont_line)
 {
@@ -128,23 +133,15 @@ void line::inicialization_line(unsigned int num_estations, string name_line, uns
     cout<<endl;
 }
 
-int line::findStation(){
-
-    string sta;
-
-    //imprimir red
-
-    cout<<"ingrese el nombre de la estacion: ";cin>>sta;
+bool line::findStation(string sta){
 
     for(unsigned int i=0;i<(num_estations*2)-1;i+=2){
         if(ptr_line[i]==sta){
-            cout<<"\n la estacion se encuentra en la linea ";
-            return 0;
+            return true;
         }
     }
 
-    cout<<"\nla estacion no se encuentra en la linea ";
-    return 0;
+    return false;
 }
 
 void line::deleteStation(){
@@ -152,7 +149,9 @@ void line::deleteStation(){
     string sta;
     unsigned int x=0;
 
-    cout<<"ingrese el nombre de la estacion que desea eliminar: ";cin>>sta;
+    //verificar que la estacion exista
+
+    sta=verifyStation(this,"el nombre de la estacion que desea eliminar");
 
     for(unsigned int i=0;i<(num_estations*2)-1;i+=2){
         x++;
@@ -173,63 +172,74 @@ void line::deleteStation(){
         ptr_line[j]=ptr_line[j+2];
 
     }
+    cout<<"la estacion "<<sta<<" fue eliminada "<<endl;
+    num_estations--;
 
 }
 
 void line::amountStations(){
 
-    cout<<"la linea tiene "<<num_estations<<"estaciones"<<endl;
+    cout<<"la linea tiene "<<num_estations<<" estaciones"<<endl;
 
 }
 
-string line::get_name_line()
-{
-    return name_line;
-}
+void line::addStation(string sta,bool first_pos){
 
-string *line::get_ptr_line()
-{
-    return ptr_line;
-}
+    string time1;
+    //si la esatcion sera ingresada en la primera posicion
+    if(first_pos){
+        cout<<"\ningrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[0]<<" : ";
+        cin>>time1;cout<<endl;
 
-unsigned int line::get_num_estations()
-{
-    return num_estations;
-}
-
-bool line::get_object_valid()
-{
-    return object_valid;
-}
-
-void line::addStation(){
-
-    string elem;
-    cout<<"ingrese despues de cual estacion quiere agregar la nueva: ";cin>>elem;
-    cout<<"\n";
-
-    string sta,time1, time2;
-    unsigned int x=0;
-    cout<<"ingrese el nombre de la nueva estacion: ";cin>>sta;
-    cout<<"\n ingrese el tiempo que tardara el tren en llegar de la estacion "<<elem<<" a la estacion "<<sta;
-
-    for(unsigned int i=(num_estations*2)-1;true;i--){
-        //desplazar lo elementos hacia la derecha hasta que encuentre elem
-        x++;
-        ptr_line[i+1]=ptr_line[i-1];
-        //encontro el elmento
-        if(ptr_line[i-3]==elem){
-            //asignar los nuevos valores
-            cout<<"ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[i+1];
-            cin>>time2;cout<<endl;
-            ptr_line[i]=time2;
-            ptr_line[i-1]=sta;
-            ptr_line[i-2]=time1;
-            break;
+        //mover lo elementos dos posiciones hacia la derecha
+        for (int i =(num_estations*2);i>=2;i--) {
+            ptr_line[i] = ptr_line[i - 2];
         }
-        ptr_line[i]=ptr_line[i-2];
+        //agrgar estacion y timepo en las primeras posiciones
+        ptr_line[0]=sta;
+        ptr_line[1]=time1;
+        num_estations++;
+
+
+    }else{
+
+        string elem;
+        //verificar que la estacion exista
+        elem=verifyStation(this," despues de cual estacion quiere agregar la nueva (nombre)");
+
+        string time2;
+        cout<<"\n ingrese el tiempo que tardara el tren en llegar de la estacion "<<elem<<" a la estacion "<<sta<<" : ";
+        cin>>time1;cout<<endl;
+
+        for(unsigned int i=(num_estations*2)-1;true;i--){
+
+            //verificar si el ultimo elemento sera ingresado en la ultima posicion
+            if(ptr_line[i-1]==elem){
+                ptr_line[i]=time1;
+                ptr_line[i+1]=sta;
+                break;
+
+            }
+            //desplazar lo elementos hacia la derecha hasta que encuentre elem
+            ptr_line[i+1]=ptr_line[i-1];
+            //encontro el elmento
+            if(ptr_line[i-3]==elem){
+                //asignar los nuevos valores
+                cout<<"ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[i+1]<<" : ";
+                cin>>time2;cout<<endl;
+                ptr_line[i]=time2;
+                ptr_line[i-1]=sta;
+                ptr_line[i-2]=time1;
+                break;
+            }
+            ptr_line[i]=ptr_line[i-2];
+
+        }
+        cout<<"la estacion "<<sta<<" fue agregada "<<endl;
+        num_estations++;
 
     }
+
 
 
 }
@@ -242,8 +252,12 @@ void line::timeStations(){
     //para verificar si sta1 se encuetra primero que sta2 en la linea
     bool order=NULL,start_sum=false;
     cout<<"ingrese las estaciones entre las cuales quiere conocer el tiempo que tarda el tren en llegar "<<endl;
-    cout<<"ingrese el nombre de la primera estacion: ";cin>>sta1;
-    cout<<endl<<"ingrese el nombre de la segunda estacion: ";cin>>sta2;
+
+
+    //verificar que las estaciones existan
+    sta1=verifyStation(this,"el nombre de la primera estacion");
+    sta2=verifyStation(this,"el nombre de la segunda estacion");
+
 
     for(unsigned int i=0;i<(num_estations*2)-1;i+=2){
 
@@ -268,31 +282,34 @@ void line::timeStations(){
             }
 
             if(start_sum){
-                //i+1 siguiente posicion donde se encuentra el tiempo pasarlo a float
-                sum_tiempo+=stof(ptr_line[i+1]);
-                //hasta que enceuntre la otra estacion dejar de sumar
+
+                //hasta que encuentre la otra estacion dejar de sumar
                 if(sta2==ptr_line[i]){
+
                     break;
                 }
+                //i+1 siguiente posicion donde se encuentra el tiempo pasarlo a float
+                sum_tiempo+=stof(ptr_line[i+1]);
             }
 
         }
 
     }else{
         //como sta2 esta primero en el ptr hacer lo mismo de arriba pero alreves
-        for(unsigned int i=(num_estations*2)-1;i>0;i-=2){
+        for(unsigned int i=(num_estations*2)-2;i>0;i-=2){
             //cuando ecuentre la estacion hacer empezar a sumar
-            if(sta2==ptr_line[i]){
+            if(sta1==ptr_line[i]){
                 start_sum=true;
             }
 
             if(start_sum){
-                //i-1 siguiente posicion donde se encuentra el tiempo pasarlo a float
-                sum_tiempo+=stof(ptr_line[i-1]);
-                //hasta que enceuntre la otra esatcion dejar de sumar
-                if(sta1==ptr_line[i]){
+
+                //hasta que encuentre la otra estacion dejar de sumar
+                if(sta2==ptr_line[i]){
                     break;
                 }
+                //i-1 siguiente posicion donde se encuentra el tiempo pasarlo a float
+                sum_tiempo+=stof(ptr_line[i-1]);
             }
 
         }
@@ -302,11 +319,11 @@ void line::timeStations(){
     //pasar los minutos a segundos
     sum_tiempo*=60;
 
-    // Obtiene el tiempo actual en segundos
+    // Obtiene el tiempo en segundos
     time_t tiempoActual = time(nullptr);
 
     //se le restan 180000 para obtener la actual
-    tiempoActual-=18000;
+    //tiempoActual-=18000;
 
     // Convierte el tiempo a una forma legible
     tm* tiempoLocal = localtime(&tiempoActual);
@@ -321,8 +338,56 @@ void line::timeStations(){
 
 }
 
+//getters
+
+string line::get_name_line()
+{
+    return name_line;
+}
+
+string *line::get_ptr_line()
+{
+    return ptr_line;
+}
+
+unsigned int line::get_tam_ptr_line()
+{
+    return tam_ptr_line;
+}
+
+unsigned int line::get_num_estations()
+{
+    return num_estations;
+}
+
+bool line::get_object_valid()
+{
+    return object_valid;
+}
+
+
+
+//destructor
+
 
 line::~line()
 {
     delete ptr_line;
+}
+
+//funcion
+
+string verifyStation(line *L, string phrase) {
+    string sta;
+    while(true){
+        cout<<"ingrese "+phrase<<": ";cin>>sta;
+        cout<<endl;
+        if(!L->findStation(sta)){
+            cout<<"la estacion no existe\ningrese otra estacion"<<endl;
+        }else{
+            break;
+        }
+    }
+
+    return sta;
 }

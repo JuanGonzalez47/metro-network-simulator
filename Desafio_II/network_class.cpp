@@ -53,7 +53,7 @@ void network::printNetwork(){
     cout << "RED METRO\n\n";
     for(unsigned int i = 0; i < numLines;i++){
         cout<<"linea "<<matrixNetwork[i].get_name_line();
-        for(unsigned j = 0; j < (matrixNetwork[i].get_num_estations()*2)-1;j+=2){
+        for(unsigned j = 0; j < (matrixNetwork[i].get_num_estations()*2)-1;j++){
             cout<<" " <<"|"<<(matrixNetwork[i].get_ptr_line())[j]<<"|";
         }
         cout<<endl;
@@ -92,6 +92,12 @@ unsigned int network::get_numLines()
 string network::get_name_lines()
 {
     return name_lines;
+}
+
+line *network::getMatrixnetwork(){
+
+    return matrixNetwork;
+
 }
 
 void network::amountline(){

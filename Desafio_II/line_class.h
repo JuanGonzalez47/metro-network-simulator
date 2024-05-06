@@ -11,6 +11,9 @@ using namespace std;
 class line
 {
 private:
+
+    //tamaño del arreglo ptrline
+    unsigned int tam_ptr_line;
     //Numero de estaciones que tendra la linea
     unsigned int num_estations;
     // matriz unidimensional con la linea
@@ -29,30 +32,24 @@ public:
 
     //metodos
     void inicialization_line(unsigned int num_estations, string name_line, unsigned int m, virtual_network_class *red_aux, unsigned int cont_line);
-    void addStation();
+    void addStation(string sta,bool first_pos);
     void amountStations();
-    int findStation();
+    bool findStation(string sta);
     void deleteStation();
     void timeStations();
 
     //geters
     string get_name_line();
     string* get_ptr_line();
+    unsigned int get_tam_ptr_line();
     unsigned int get_num_estations();
     bool get_object_valid();
+
 };
 
+  //funcion para verificar que una esatcion dada exista
 
-
-
-
-
-
-
-
-
-
-
+string verifyStation(line* L,string phrase);
 
 #endif // LINE_CLASS_H
 
