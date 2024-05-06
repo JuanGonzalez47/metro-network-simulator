@@ -62,8 +62,8 @@ void line::inicialization_line(unsigned int num_estations, string name_line, uns
                         //se verifica que el numero que ingrese a hacer transferencia sea cero
                         if (num_line_transfer == 0 || num_line_transfer > red_aux->get_numLines() - cont_line) cout<<"Ingrese un numero valido de lineas a hacer transferencia"<<endl<<endl;
                         else{
-                            while(verify1){
-                                for (unsigned int k = 0; k < num_line_transfer; k++){
+                            for (unsigned int k = 0; k < num_line_transfer; k++){
+                                while(verify){
                                     cout<<"Ingrese el nombre de la linea "<<k+1<<" con la que desea hacer transferencia: ";cin>>name_line_transfer;
                                     //verificar que la linea que escriba este disponible para hacer transferencia y que no sea ella misma
                                     if (red_aux->get_name_lines().find(name_line_transfer) == string::npos || name_line_transfer == name_line) cout<<"Ingrese una linea que se encuentre en la red, recuerde que no puede ser la linea actual"<<endl<<endl;
@@ -73,7 +73,8 @@ void line::inicialization_line(unsigned int num_estations, string name_line, uns
 
                                         //buscar linea con la que se va a hacer transferencia
 
-                                        //linea a tranferir.addStation
+                                        //metodo para buscar la linea a hacer transferencia y agregar la estacion
+                                        //red_aux->find_name_line(name_line_transfer);
                                         ptr_line[i] = name_estation + name_line;
 
                                         if(i==(num_estations-1)){
@@ -209,13 +210,10 @@ void line::addStation(){
     cout<<"\n";
 
     string sta,time1, time2;
-    unsigned int x=0;
     cout<<"ingrese el nombre de la nueva estacion: ";cin>>sta;
-    cout<<"\n ingrese el tiempo que tardara el tren en llegar de la estacion "<<elem<<" a la estacion "<<sta;
 
     for(unsigned int i=(num_estations*2)-1;true;i--){
         //desplazar lo elementos hacia la derecha hasta que encuentre elem
-        x++;
         ptr_line[i+1]=ptr_line[i-1];
         //encontro el elmento
         if(ptr_line[i-3]==elem){
