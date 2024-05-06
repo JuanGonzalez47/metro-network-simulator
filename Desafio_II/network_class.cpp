@@ -30,8 +30,7 @@ void network::inicialization_red(virtual_network_class *red_aux)
             else{
                 //agregar al string que contiene los nombres de las lineas, la linea que se agrego
                 name_lines += name_line;
-                cont_line++;
-                cout<<"Ingrese el numero de estaciones de la linea "<<i+1<<" : ";cin>>num_estations;
+                cout<<"Ingrese el numero de estaciones de la linea "<<name_line<<" : ";cin>>num_estations;
                 //crear un puntero a cada uno de los objetos
                 //esto se hace porque si pasamos el objeto directamente, cuando sale del for llama automaticamente
                 //el destrcutor y matrixNetwork estaria accediendo a una memoria invalida (ya liberada)
@@ -42,8 +41,42 @@ void network::inicialization_red(virtual_network_class *red_aux)
                 line* name_object = new line(num_estations, name_line);
                 name_object->inicialization_line(num_estations,name_line,i,red_aux,cont_line);
                 matrixNetwork[i] = *name_object;
+                cont_line++;
                 verify_line = false;
             }
+        }
+    }
+}
+
+void network::addLine(virtual_network_class *red_aux)
+{
+    //booleano que me dira si la linea esta o no repetida
+    bool verify_line = true;
+    string name_line;
+    unsigned int num_estations;
+    //entero para llevar a cabo una verificacion de transferencia
+    unsigned int cont_line = 0;
+    while (verify_line){
+        cout<<"Ingrese el nombre de la linea "<<numLines + 1<<" a agregar : ";cin>>name_line;
+        if (this->line_on_red(name_line)) cout<<"Ingrese una linea que no este en la red"<<endl<<endl;
+        else{
+            //agregar al string que contiene los nombres de las lineas, la linea que se agrego
+            name_lines += name_line;
+            cout<<"Ingrese el numero de estaciones de la linea "<<name_line<<" : ";cin>>num_estations;
+            //crear un puntero a cada uno de los objetos
+            //esto se hace porque si pasamos el objeto directamente, cuando sale del for llama automaticamente
+            //el destrcutor y matrixNetwork estaria accediendo a una memoria invalida (ya liberada)
+            //le pasamos al constructor sobrecargado de la clase line ese puntero a la clase network
+            //para que el puntero de la clase abstracta quede incializado con un puntero a la clase red y posteriormente
+            //usar metodos de la clase network en line (esto se da por el polimorfismo y la sobreescritura que estamos haciendo del metodo)
+            red_aux = this;
+            line* name_object = new line(num_estations, name_line);
+            name_object->inicialization_line(num_estations,name_line,1,red_aux,cont_line);
+            matrixNetwork[numLines] = *name_object;
+            cont_line++;
+            verify_line = false;
+            //actualizar el atributo de numero de lineas
+            numLines++;
         }
     }
 }
@@ -58,6 +91,7 @@ void network::printNetwork(){
         }
         cout<<endl;
     }
+    cout<<endl;
 }
 
 bool network::line_on_red(string name_line)
@@ -82,6 +116,13 @@ bool network::normal_estation_on_red(string name_estation, unsigned int num_esta
     return false;
 }
 
+void network::find_name_line(string name_line_transfer)
+{
+    for (unsigned int w = 0; w < numLines; w++){
+        if (matrixNetwork[w].get_name_line() == name_line_transfer) matrixNetwork[w].addStation();
+    }
+}
+
 
 unsigned int network::get_numLines()
 {
@@ -96,8 +137,47 @@ string network::get_name_lines()
 
 void network::amountline(){
 
-    cout<<"la red metro tiene "<<numLines<<"lineas \n";
+    cout<<"la red metro tiene "<<numLines<<" lineas \n";
 
 }
 
+
+void network::amountStations()
+{
+    unsigned int sum_estations = 0;
+    for(unsigned int i = 0; i < numLines; i++){
+        sum_estations += matrixNetwork[i].get_num_estations();
+    }
+    cout<<"La red metro tiene "<<sum_estations<<" estaciones \n";
+}
+
+
+void network::deleteLine(string name_line)
+{
+    for(unsigned int i = 0; i < numLines; i++){
+        if (matrixNetwork[i].get_name_line() == name_line){
+            //pasarle un nuevo objeto line invalido
+            line* name_object = new line();
+            if (i == numLines - 1) {
+                matrixNetwork[i] = *name_object;
+                //actualizar atributo
+                numLines--;
+                break;
+            }
+            else{
+                //poner en esa posicion otro objeto vacio e invalido
+                matrixNetwork[i] = *name_object;
+                //tomar la posicion en la cual la encontro
+                for(unsigned int j = i; j < numLines; j++){
+                    //mover los elementos
+                    matrixNetwork[j] = matrixNetwork[j+1];
+                }
+                //actualizar atributo
+                numLines--;
+                break;
+            }
+        }
+    }
+
+}
 
