@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 #ifndef LINE_CLASS_H
@@ -35,7 +36,7 @@ public:
     void addStation(string sta,bool first_pos);
     void amountStations();
     bool findStation(string sta);
-    void deleteStation();
+    void deleteStation(string sta);
     void timeStations();
 
     //geters
