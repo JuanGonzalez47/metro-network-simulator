@@ -25,11 +25,11 @@ void network::inicialization_red(virtual_network_class *red_aux)
     for (unsigned int i = 0; i < numLines; i++){
         verify_line = true;
         while (verify_line){
+            cout<<endl;
             cout<<"Ingrese el nombre de la linea "<<i+1<<" : ";cin>>name_line;
             if (this->line_on_red(name_line)) cout<<"Ingrese una linea que no este en la red"<<endl<<endl;
             else{
                 //agregar al string que contiene los nombres de las lineas, la linea que se agrego
-                name_lines += name_line;
                 cout<<"Ingrese el numero de estaciones de la linea "<<name_line<<" : ";cin>>num_estations;
                 //crear un puntero a cada uno de los objetos
                 //esto se hace porque si pasamos el objeto directamente, cuando sale del for llama automaticamente
@@ -61,7 +61,6 @@ void network::addLine(virtual_network_class *red_aux)
         if (this->line_on_red(name_line)) cout<<"Ingrese una linea que no este en la red"<<endl<<endl;
         else{
             //agregar al string que contiene los nombres de las lineas, la linea que se agrego
-            name_lines += name_line;
             cout<<"Ingrese el numero de estaciones de la linea "<<name_line<<" : ";cin>>num_estations;
             //crear un puntero a cada uno de los objetos
             //esto se hace porque si pasamos el objeto directamente, cuando sale del for llama automaticamente
@@ -69,6 +68,7 @@ void network::addLine(virtual_network_class *red_aux)
             //le pasamos al constructor sobrecargado de la clase line ese puntero a la clase network
             //para que el puntero de la clase abstracta quede incializado con un puntero a la clase red y posteriormente
             //usar metodos de la clase network en line (esto se da por el polimorfismo y la sobreescritura que estamos haciendo del metodo)
+            cont_line = numLines;
             red_aux = this;
             line* name_object = new line(num_estations, name_line);
             name_object->inicialization_line(num_estations,name_line,1,red_aux,cont_line);
@@ -79,6 +79,7 @@ void network::addLine(virtual_network_class *red_aux)
             numLines++;
         }
     }
+    cout<<"La linea "<<name_line<<" ha sido agregada"<<endl;
 }
 
 
@@ -102,13 +103,29 @@ bool network::line_on_red(string name_line)
     return false;
 }
 
-bool network::normal_estation_on_red(string name_estation, unsigned int num_estations, unsigned int numLines, bool valid, string name_estation_same_line)
+bool network::normal_estation_on_red(string name_estation, unsigned int numLines, bool valid, string name_estation_same_line)
 {
     for (unsigned int i = 0; i < numLines; i++){
-        if (name_estation_same_line.find(name_estation) != string::npos) return true;
-        else if (matrixNetwork[i].get_object_valid()){
-            for (unsigned j = 0; j < num_estations; j++){
-                if (valid == true) if (name_estation == matrixNetwork[i].get_ptr_line()[j]) return true;
+        istringstream iss(name_estation_same_line);
+        string word;
+        while (iss >> word) {
+            if (word == name_estation) {
+                return true;
+            }
+        }
+        if (matrixNetwork[i].get_object_valid()){
+            for (unsigned j = 0; j < (matrixNetwork[i].get_num_estations()*2)-1; j+=2){
+                if (valid == true){
+                    if (name_estation == matrixNetwork[i].get_ptr_line()[j]) return true;
+                    string name_estation_aux;
+                    name_estation_aux = matrixNetwork[i].get_ptr_line()[j];
+                    size_t pos = name_estation_aux.find('-');
+                    //tomando una estacion de transferencia solo con el nombre no con los indices
+                    name_estation_aux = name_estation_aux.substr(0,pos);
+                    if(name_estation == name_estation_aux) return true;
+                    else if (name_estation == name_estation_aux + '-') return true;
+                    else if (name_estation == matrixNetwork[i].get_ptr_line()[j] + '-') return true;
+                }
             }
         }
         else return false;
@@ -116,11 +133,52 @@ bool network::normal_estation_on_red(string name_estation, unsigned int num_esta
     return false;
 }
 
-void network::find_name_line(string name_line_transfer)
+
+void network::search_transfer_and_put(string name_line_transfer, string name_estation)
 {
-    for (unsigned int w = 0; w < numLines; w++){
-        if (matrixNetwork[w].get_name_line() == name_line_transfer) matrixNetwork[w].addStation();
+    bool first = false;
+    char x;
+
+    cout<<"Ingrese 1 si la estacion que desea agregar estara en la primera posicion de la linea de lo contario ingrese cualquier caracter: ";cin>>x;
+    cout<<endl;
+
+    while(x=='1'){
+        first=true;
+        break;
     }
+
+    if(first){
+        //ingresarla en la primera posicion
+        for (unsigned int i = 0; i < numLines; i++){
+            if (matrixNetwork[i].get_name_line() == name_line_transfer) matrixNetwork[i].addStation(name_estation + "linea_" + matrixNetwork[i].get_name_line(),true);                }
+    }
+    else{
+        //posicion cualquiera
+        for (unsigned int i = 0; i < numLines; i++){
+            if (matrixNetwork[i].get_name_line() == name_line_transfer) matrixNetwork[i].addStation(name_estation + "linea_" + matrixNetwork[i].get_name_line(),false);
+        }
+    }
+}
+
+bool network::normal_estation_on_red(string name_estation)
+{
+    for (unsigned int i = 0; i < numLines; i++){
+        if (matrixNetwork[i].get_object_valid()){
+            for (unsigned j = 0; j < (matrixNetwork[i].get_num_estations()*2)-1; j+=2){
+                if (name_estation == matrixNetwork[i].get_ptr_line()[j]) return true;
+                string name_estation_aux;
+                name_estation_aux = matrixNetwork[i].get_ptr_line()[j];
+                size_t pos = name_estation_aux.find('-');
+                //tomando una estacion de transferencia solo con el nombre no con los indices
+                name_estation_aux = name_estation_aux.substr(0,pos);
+                if(name_estation == name_estation_aux) return true;
+                else if (name_estation == name_estation_aux + '-') return true;
+                else if (name_estation == matrixNetwork[i].get_ptr_line()[j] + '-') return true;
+            }
+        }
+        else return false;
+    }
+    return false;
 }
 
 
@@ -130,15 +188,15 @@ unsigned int network::get_numLines()
 }
 
 
-string network::get_name_lines()
-{
-    return name_lines;
-}
-
 line *network::getMatrixnetwork(){
 
     return matrixNetwork;
 
+}
+
+void network::set_Amount_stations_auxiliar(unsigned int new_value)
+{
+    Amount_stations_auxiliar += new_value;
 }
 
 void network::amountline(){
@@ -154,6 +212,7 @@ void network::amountStations()
     for(unsigned int i = 0; i < numLines; i++){
         sum_estations += matrixNetwork[i].get_num_estations();
     }
+    sum_estations -= Amount_stations_auxiliar;
     cout<<"La red metro tiene "<<sum_estations<<" estaciones \n";
 }
 
@@ -184,6 +243,7 @@ void network::deleteLine(string name_line)
             }
         }
     }
+    cout<<"La linea "<<name_line<<" ha sido eliminada"<<endl;
 
 }
 
