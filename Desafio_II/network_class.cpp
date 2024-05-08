@@ -11,7 +11,7 @@ network::network(unsigned int numLines_)
 
 network::~network()
 {
-    delete matrixNetwork;
+    delete[] matrixNetwork;
 }
 
 void network::inicialization_line(unsigned int num_estations, string name_line, unsigned int m, unsigned int cont_line, line *line)
@@ -19,6 +19,7 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
     bool verify = true;
     bool verify1 = true;
     bool valid = false;
+    bool verification_to_time = true;
     //booleano para verificar que la linea si quede conectada por medio de una estacion de transferencia
     bool verify_estation_transfer = false;
     //string para guardar las estaciones donde ya se hicieron transferencia
@@ -37,6 +38,7 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
     num_estations=(num_estations*2)-1;
     //inicializar la linea
     for (unsigned int i = 0; i < num_estations; i+=2){
+        verification_to_time = true;
         verify = true;
         verify1 = true;
         already_transfer = "";
@@ -94,7 +96,7 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
                                                 already_transfer += name_line_transfer;
                                                 verify_estation_transfer = true;
 
-                                                while(i==(num_estations-1)){
+                                                while(i==(num_estations-1) && verification_to_time == true){
 
                                                     //agregar tiempo entre estaciones
 
@@ -104,6 +106,7 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
                                                         time_station=verifyNum();
                                                         line->addStation(time_station,i);
                                                     }
+                                                    verification_to_time = false;
                                                     break;
 
                                                 }
@@ -380,9 +383,9 @@ void network::deleteLine(string name_line)
     }
     else{
         for(unsigned int i = 0; i < numLines; i++){
-            for(unsigned int j = 0; j < getMatrixnetwork()[i].get_num_estations();j+=2){
-                if (matrixNetwork[i].get_name_line() == name_line && getMatrixnetwork()[i].get_ptr_line()[j].find('-') != string::npos){
-                    cout<<"La linea "<<name_line<<" no se ha podido eliminar ya que tiene estaciones de transferencia"<<endl;
+            if (matrixNetwork[i].get_name_line() == name_line){
+                for(unsigned int j = 0; j < getMatrixnetwork()[i].get_num_estations()*2;j+=2){
+                    if (getMatrixnetwork()[i].get_ptr_line()[j].find('-') != string::npos) cout<<"La linea "<<name_line<<" no se ha podido eliminar ya que tiene estaciones de transferencia"<<endl;
                 }
             }
         }
