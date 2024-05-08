@@ -29,118 +29,7 @@ line::line(unsigned int num_estations_, string name_line_)
 
 //metodos clase line
 
-void line::inicialization_line(unsigned int num_estations, string name_line, unsigned int m, virtual_network_class *red_aux, unsigned int cont_line)
-{
-    bool verify = true;
-    bool verify1 = true;
-    bool valid = false;
-    //string para guardar las estaciones donde ya se hicieron transferencia
-    string already_transfer = "";
-    string name_estation;
-    unsigned int num_line_transfer;
-    //string que almacenara los nombres de las lineas con los cuales va a hacer transferencia
-    string name_line_transfer,time_station;
-    //string que se almacenaran las estaciones de la misma linea para ver si repiten
-    string name_estation_same_line;
-    unsigned int cont=0;
-    //es para dar permiso de ingresar la primera estacion de todo el programa
-    if (m != 0) valid = true;
-    //se le agregan los tiempos entre cada esatcion
-    num_estations=(num_estations*2)-1;
-    //inicializar la linea
-    for (unsigned int i = 0; i < num_estations; i+=2){
-        verify = true;
-        verify1 = true;
-        already_transfer = "";
-        cont++;
-        cout<<endl;
-        cout<<"Nota: recuerde que si desea ingresar una estacion de transferencia, al final debera de escirbir un guion. Ejemplo:(name-)"<<endl<<endl;
-        while (verify){
-            cout<<"Ingrese la estacion "<<cont<<" : ";cin>>name_estation;
-            if (name_estation.find('-') != string::npos){
-                //verificar que la estacion no este repetida en la linea o en la red en general
-                if (red_aux->normal_estation_on_red(name_estation,red_aux->get_numLines(),valid,name_estation_same_line)) cout<<"Ingrese una estacion que no este repetida"<<endl<<endl;
-                else{
-                    //verificar que la red tenga mas de una linea para poder que ingrese una estacion de transferencia
-                    if(m == 0){
-                        cout<<"No puede crear una estacion de transferencia ya que la red no tiene mas de una linea"<<endl<<endl;
-                        verify1 = false;
-                    }
-                    else{
-                        while(verify1){
-                            cout<<"Ingrese con cuantas lineas va a hacer transferencia: ";cin>>num_line_transfer;cout<<endl;
-                            //se verifica que cuando vaya a hacer transfrencia hayan lineas disponibles para hacerlo
-                            //se verifica que el numero que ingrese a hacer transferencia sea cero
-                            if (num_line_transfer == 0 || num_line_transfer > cont_line) cout<<"Ingrese un numero valido de lineas a hacer transferencia"<<endl<<endl;
-                            else{
-                                red_aux->set_Amount_stations_auxiliar(num_line_transfer);
-                                while(verify1){
-                                    for (unsigned int k = 0; k < num_line_transfer; k++){
-                                        cout<<"Ingrese el nombre de la linea con la que desea hacer transferencia: ";cin>>name_line_transfer;
-                                        //verificar que la linea que escriba este disponible para hacer transferencia y que no sea ella misma
-                                        while (true){
-                                            if (already_transfer.find(name_line_transfer) != string::npos) {
-                                                cout<<"Por favor ingrese una linea diferente a hacer transferencia"<<endl;
-                                            }
-                                        }
-                                        if (!red_aux->line_on_red(name_line_transfer) || name_line_transfer == name_line) cout<<"Ingrese una linea que se encuentre en la red, recuerde que no puede ser la linea actual"<<endl<<endl;
-                                        else{
-                                            //metodo para buscar la linea con la que desea hacer transferencia y agregar la estacion de transferencia
-                                            //llamar metodo que ponga una estacion en una linea en especifico
-                                            red_aux->search_transfer_and_put(name_line_transfer,name_estation);
-                                            ptr_line[i] = name_estation + "linea_" + name_line;
-                                            name_estation_same_line += name_estation;
-                                            already_transfer += name_line_transfer;
 
-
-                                            while(i==(num_estations-1)){
-
-                                                //agregar tiempo entre estaciones
-
-                                                for(unsigned int i=1;i<(num_estations-1);i+=2){
-
-                                                    cout<<"Ingrese el tiempo (en minutos) que tardara el tren en llegar de la estacion "<<ptr_line[i-1]<<" -> "<<ptr_line[i+1]<<" : ";
-                                                    cin>>time_station;
-                                                    ptr_line[i]=time_station;
-                                                }
-                                                break;
-                                            }
-                                            verify = false;
-                                            verify1 = false;
-                                        }
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else{
-                if (red_aux->normal_estation_on_red(name_estation,red_aux->get_numLines(),valid,name_estation_same_line)) cout<<"Ingrese una estacion que no este repetida"<<endl<<endl;
-                else{
-                    ptr_line[i] = name_estation;
-
-
-                    name_estation_same_line += name_estation;
-                    verify = false;
-                    valid = true;
-                    if(i==(num_estations-1)){
-
-                        //agregar tiempo entre estaciones
-
-                        for(unsigned int i=1;i<(num_estations-1);i+=2){
-
-                            cout<<"Ingrese el tiempo (en minutos)  que tardara el tren en llegar de la estacion "<<ptr_line[i-1]<<" -> "<<ptr_line[i+1]<<" : ";
-                            cin>>time_station;cout<<endl;
-                            ptr_line[i]=time_station;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 bool line::findStation(string sta){
 
@@ -192,7 +81,7 @@ void line::addStation(string sta,bool first_pos){
     //si la esatcion sera ingresada en la primera posicion
     if(first_pos){
         cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[0]<<" : ";
-        cin>>time1;cout<<endl;
+        cin>>time1;cout<<endl;////////////////////////////////////////////////777
 
         //mover lo elementos dos posiciones hacia la derecha
         for (int i =(num_estations*2);i>=2;i--) {
@@ -212,7 +101,7 @@ void line::addStation(string sta,bool first_pos){
 
         string time2;
         cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<elem<<" a la estacion "<<sta<<" : ";
-        cin>>time1;cout<<endl;
+        cin>>time1;cout<<endl;///////////////////////////////////////////////7
 
         for(unsigned int i=(num_estations*2)-1;true;i--){
 
@@ -229,7 +118,7 @@ void line::addStation(string sta,bool first_pos){
             if(ptr_line[i-3]==elem){
                 //asignar los nuevos valores
                 cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[i+1]<<" : ";
-                cin>>time2;cout<<endl;
+                cin>>time2;cout<<endl;///////////////////////////////////////////
                 ptr_line[i]=time2;
                 ptr_line[i-1]=sta;
                 ptr_line[i-2]=time1;
@@ -243,8 +132,11 @@ void line::addStation(string sta,bool first_pos){
 
     }
 
+}
 
-
+void line::addStation(string sta, unsigned int i)
+{
+    ptr_line[i] = sta;
 }
 
 void line::timeStations(){
@@ -331,13 +223,13 @@ void line::timeStations(){
     // Convierte el tiempo a una forma legible
     tm* tiempoLocal = localtime(&tiempoActual);
 
-    cout<<"Si usted sale de la estacion "<<sta1<<" a las "<<tiempoLocal->tm_hour << ":" << tiempoLocal->tm_min << ":" << tiempoLocal->tm_sec << endl;
+    cout<<"Si usted sale de la estacion "<<sta1<<" a las "<<tiempoLocal->tm_hour << ":" << tiempoLocal->tm_min<< endl;
 
     tiempoActual+=sum_tiempo;
 
     tm* tiempoLlegada = localtime(&tiempoActual);
 
-    cout<<"Llegara a la estacion "<<sta2<<" a las "<<tiempoLlegada->tm_hour << ":" << tiempoLlegada->tm_min << ":" << tiempoLlegada->tm_sec << endl;
+    cout<<"Llegara a la estacion "<<sta2<<" a las "<<tiempoLlegada->tm_hour << ":" << tiempoLlegada->tm_min << endl;
 
 }
 
@@ -394,3 +286,21 @@ string verifyStation(line *L, string phrase) {
 
     return sta;
 }
+
+
+string mayus_to_minus(string word){
+    //convertir todos los caracters de un string a minuscula esto se hace para que los nombres de las esatciones sean minusculas
+    for (unsigned int i = 0; i < word.length(); i++) {
+        word[i] = tolower( word[i]);
+    }
+    return word;
+}
+
+string minus_to_mayus(string word) {
+  //convertir todos los caracters de un string a mayuculas esto se hace para que los nombres de las lineas sean mayusculas
+    for (unsigned int i = 0; i < word.length(); i++) {
+        word[i] = toupper(word[i]);
+    }
+    return word;
+}
+
