@@ -6,7 +6,6 @@ using namespace std;
 #ifndef LINE_CLASS_H
 #define LINE_CLASS_H
 
-#include "virtual_network_class.h"
 
 //definir clase line
 class line
@@ -32,8 +31,8 @@ public:
     ~line();
 
     //metodos
-    void inicialization_line(unsigned int num_estations, string name_line, unsigned int m, virtual_network_class *red_aux, unsigned int cont_line);
     void addStation(string sta,bool first_pos);
+    void addStation(string sta, unsigned int i);
     void amountStations();
     bool findStation(string sta);
     void deleteStation(string sta);
@@ -51,6 +50,7 @@ public:
   //funcion para verificar que una esatcion dada exista
 
 string verifyStation(line* L,string phrase);
+string mayus_to_minus(string word);
 
 #endif // LINE_CLASS_H
 
