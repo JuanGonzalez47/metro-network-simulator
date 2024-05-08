@@ -8,6 +8,7 @@ class network
 
 private:
 
+    unsigned int tam_matrix_network;
     line *matrixNetwork;
     unsigned int numLines;
     int *elemLine;
@@ -38,9 +39,11 @@ public:
     //geters
     unsigned int get_numLines ();
     line* getMatrixnetwork();
+    unsigned int getTamMatrixNetwork();
 
     //setter
     void set_Amount_stations_auxiliar(unsigned int new_value);
+    void setTamMatrixNetwork(unsigned int tam_);
 };
 
 

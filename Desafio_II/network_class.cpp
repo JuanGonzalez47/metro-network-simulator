@@ -6,12 +6,8 @@ network::network(unsigned int numLines_)
 {
     numLines = numLines_;
     //memoria reservada para la red que contendra los objetas "line"
-    matrixNetwork = new line[numLines + 10];
-}
-
-network::network()
-{
-//constructor para poder llevar a cabo el polimorfismo
+    tam_matrix_network=numLines+10;
+    matrixNetwork = new line[tam_matrix_network];
 }
 
 void network::inicialization_line(unsigned int num_estations, string name_line, unsigned int m, unsigned int cont_line, line *line)
@@ -23,6 +19,7 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
     string already_transfer = "";
     string name_estation;
     unsigned int num_line_transfer;
+    string str_num_line_transfer;
     //string que almacenara los nombres de las lineas con los cuales va a hacer transferencia
     string name_line_transfer,time_station;
     //string que se almacenaran las estaciones de la misma linea para ver si repiten
@@ -55,7 +52,9 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
                     }
                     else{
                         while(verify1){
-                            cout<<"Ingrese con cuantas lineas va a hacer transferencia: ";cin>>num_line_transfer;cout<<endl;/////////
+                            cout<<"Ingrese con cuantas lineas va a hacer transferencia: ";
+                            str_num_line_transfer=verifyNum();
+                            num_line_transfer=stoi(str_num_line_transfer);
                             //se verifica que cuando vaya a hacer transfrencia hayan lineas disponibles para hacerlo
                             //se verifica que el numero que ingrese a hacer transferencia sea cero
                             if (num_line_transfer == 0 || num_line_transfer > cont_line) cout<<"Ingrese un numero valido de lineas a hacer transferencia"<<endl<<endl;
@@ -66,7 +65,7 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
                                         //verificar que la linea que escriba este disponible para hacer transferencia y que no sea ella misma
                                         while (true){
                                             cout<<"Ingrese el nombre de la linea con la que desea hacer transferencia: ";cin>>name_line_transfer;
-                                            name_line_transfer=mayus_to_minus(name_line_transfer);
+                                            name_line_transfer=minus_to_mayus(name_line_transfer);
                                             if (already_transfer.find(name_line_transfer) != string::npos) {
                                                 cout<<"Por favor ingrese una linea diferente a hacer transferencia"<<endl;
                                             }
@@ -89,7 +88,7 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
                                                 for(unsigned int i=1;i<(num_estations-1);i+=2){
 
                                                     cout<<"Ingrese el tiempo (en minutos) que tardara el tren en llegar de la estacion "<<line->get_ptr_line()[i-1]<<" -> "<<line->get_ptr_line()[i+1]<<" : ";
-                                                    cin>>time_station;///////////////////////////////7
+                                                    time_station=verifyNum();
                                                     line->addStation(time_station,i);
                                                 }
                                                 break;
@@ -121,7 +120,7 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
                         for(unsigned int i=1;i<(num_estations-1);i+=2){
 
                             cout<<"Ingrese el tiempo (en minutos)  que tardara el tren en llegar de la estacion "<<line->get_ptr_line()[i-1]<<" -> "<<line->get_ptr_line()[i+1]<<" : ";
-                            cin>>time_station;cout<<endl;/////////////////
+                            time_station=verifyNum();
                             line->addStation(time_station,i);
                         }
                     }
@@ -138,6 +137,7 @@ void network::inicialization_red()
     bool verify_line;
     string name_line;
     unsigned int num_estations;
+    string str_num_estations;
     //entero para llevar a cabo una verificacion de transferencia
     unsigned int cont_line = 0;
 
@@ -146,11 +146,15 @@ void network::inicialization_red()
         while (verify_line){
             cout<<endl;
             cout<<"Ingrese el nombre de la linea "<<i+1<<" : ";cin>>name_line;
-            name_line=mayus_to_minus(name_line);
+            name_line=minus_to_mayus(name_line);
             if (this->line_on_red(name_line)) cout<<"Ingrese una linea que no este en la red"<<endl<<endl;
             else{
                 //agregar al string que contiene los nombres de las lineas, la linea que se agrego
-                cout<<"Ingrese el numero de estaciones de la linea "<<name_line<<" : ";cin>>num_estations;////////////////////////////////7
+                cout<<"Ingrese el numero de estaciones que tendra la linea: ";
+
+                str_num_estations=verifyNum();
+                num_estations=stoi(str_num_estations);
+
                 //crear un puntero a cada uno de los objetos
                 //esto se hace porque si pasamos el objeto directamente, cuando sale del for llama automaticamente
                 //el destrcutor y matrixNetwork estaria accediendo a una memoria invalida (ya liberada)
@@ -170,15 +174,19 @@ void network::addLine()
     bool verify_line = true;
     string name_line;
     unsigned int num_estations;
+    string str_num_estations;
     //entero para llevar a cabo una verificacion de transferencia
     unsigned int cont_line = 0;
     while (verify_line){
         cout<<"Ingrese el nombre de la linea "<<numLines + 1<<" a agregar : ";cin>>name_line;
-         name_line=mayus_to_minus(name_line);
+         name_line=minus_to_mayus(name_line);
         if (this->line_on_red(name_line)) cout<<"Ingrese una linea que no este en la red"<<endl<<endl;
         else{
             //agregar al string que contiene los nombres de las lineas, la linea que se agrego
-            cout<<"Ingrese el numero de estaciones de la linea "<<name_line<<" : ";cin>>num_estations;///////////////////////////////
+            cout<<"Ingrese el numero de estaciones que tendra la linea: ";
+            str_num_estations=verifyNum();
+            num_estations=stoi(str_num_estations);
+
             //crear un puntero a cada uno de los objetos
             //esto se hace porque si pasamos el objeto directamente, cuando sale del for llama automaticamente
             //el destrcutor y matrixNetwork estaria accediendo a una memoria invalida (ya liberada)
@@ -307,9 +315,20 @@ line *network::getMatrixnetwork(){
 
 }
 
+unsigned int network::getTamMatrixNetwork()
+{
+    return tam_matrix_network;
+
+}
+
 void network::set_Amount_stations_auxiliar(unsigned int new_value)
 {
     Amount_stations_auxiliar += new_value;
+}
+
+void network::setTamMatrixNetwork(unsigned int tam_)
+{
+    tam_matrix_network+=tam_;
 }
 
 void network::amountline(){
