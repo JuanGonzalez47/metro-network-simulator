@@ -1,7 +1,6 @@
 #include "network_class.h"
 
 
-
 network::network(unsigned int numLines_)
 {
     numLines = numLines_;
@@ -10,11 +9,18 @@ network::network(unsigned int numLines_)
     matrixNetwork = new line[tam_matrix_network];
 }
 
+network::~network()
+{
+    delete matrixNetwork;
+}
+
 void network::inicialization_line(unsigned int num_estations, string name_line, unsigned int m, unsigned int cont_line, line *line)
 {
     bool verify = true;
     bool verify1 = true;
     bool valid = false;
+    //booleano para verificar que la linea si quede conectada por medio de una estacion de transferencia
+    bool verify_estation_transfer = false;
     //string para guardar las estaciones donde ya se hicieron transferencia
     string already_transfer = "";
     string name_estation;
@@ -41,87 +47,95 @@ void network::inicialization_line(unsigned int num_estations, string name_line, 
             cout<<"Ingrese la estacion "<<cont<<" : ";cin>>name_estation;
             //pasarlo a minusculas
             name_estation=mayus_to_minus(name_estation);
-            if (name_estation.find('-') != string::npos){
-                //verificar que la estacion no este repetida en la linea o en la red en general
-                if (this->normal_estation_on_red(name_estation,this->get_numLines(),valid,name_estation_same_line)) cout<<"Ingrese una estacion que no este repetida"<<endl<<endl;
-                else{
-                    //verificar que la red tenga mas de una linea para poder que ingrese una estacion de transferencia
-                    if(m == 0){
-                        cout<<"No puede crear una estacion de transferencia ya que la red no tiene mas de una linea"<<endl<<endl;
-                        verify1 = false;
-                    }
+            if (i == num_estations - 1 && verify_estation_transfer == false && m != 0 && name_estation.find('-') == string::npos && numLines > 1){
+                cout<<"Minimo debe de ingresar una estacion de transferencia"<<endl;
+            }
+            else{
+                if (name_estation.find('-') != string::npos){
+                    //verificar que la estacion no este repetida en la linea o en la red en general
+                    if (this->normal_estation_on_red(name_estation,this->get_numLines(),valid,name_estation_same_line)) cout<<"Ingrese una estacion que no este repetida"<<endl<<endl;
                     else{
-                        while(verify1){
-                            cout<<"Ingrese con cuantas lineas va a hacer transferencia: ";
-                            str_num_line_transfer=verifyNum();
-                            num_line_transfer=stoi(str_num_line_transfer);
-                            //se verifica que cuando vaya a hacer transfrencia hayan lineas disponibles para hacerlo
-                            //se verifica que el numero que ingrese a hacer transferencia sea cero
-                            if (num_line_transfer == 0 || num_line_transfer > cont_line) cout<<"Ingrese un numero valido de lineas a hacer transferencia"<<endl<<endl;
-                            else{
-                                this->set_Amount_stations_auxiliar(num_line_transfer);
-                                while(verify1){
-                                    for (unsigned int k = 0; k < num_line_transfer; k++){
-                                        //verificar que la linea que escriba este disponible para hacer transferencia y que no sea ella misma
-                                        while (true){
-                                            cout<<"Ingrese el nombre de la linea con la que desea hacer transferencia: ";cin>>name_line_transfer;
-                                            name_line_transfer=minus_to_mayus(name_line_transfer);
-                                            if (already_transfer.find(name_line_transfer) != string::npos) {
-                                                cout<<"Por favor ingrese una linea diferente a hacer transferencia"<<endl;
-                                            }
-                                            else break;
-                                        }
-                                        if (!this->line_on_red(name_line_transfer) || name_line_transfer == name_line) cout<<"Ingrese una linea que se encuentre en la red, recuerde que no puede ser la linea actual"<<endl<<endl;
-                                        else{
-                                            //metodo para buscar la linea con la que desea hacer transferencia y agregar la estacion de transferencia
-                                            //llamar metodo que ponga una estacion en una linea en especifico
-                                            this->search_transfer_and_put(name_line_transfer,name_estation);
-                                            line->addStation(name_estation + "linea_" + name_line,i);
-                                            name_estation_same_line += name_estation;
-                                            already_transfer += name_line_transfer;
-
-
-                                            while(i==(num_estations-1)){
-
-                                                //agregar tiempo entre estaciones
-
-                                                for(unsigned int i=1;i<(num_estations-1);i+=2){
-
-                                                    cout<<"Ingrese el tiempo (en minutos) que tardara el tren en llegar de la estacion "<<line->get_ptr_line()[i-1]<<" -> "<<line->get_ptr_line()[i+1]<<" : ";
-                                                    time_station=verifyNum();
-                                                    line->addStation(time_station,i);
+                        //verificar que la red tenga mas de una linea para poder que ingrese una estacion de transferencia
+                        if(m == 0){
+                            cout<<"No puede crear una estacion de transferencia ya que la red no tiene mas de una linea"<<endl<<endl;
+                            verify1 = false;
+                        }
+                        else{
+                            while(verify1){
+                                cout<<"Ingrese con cuantas lineas va a hacer transferencia: ";cin>>num_line_transfer;cout<<endl;/////////
+                                //se verifica que cuando vaya a hacer transfrencia hayan lineas disponibles para hacerlo
+                                //se verifica que el numero que ingrese a hacer transferencia sea cero
+                                str_num_line_transfer=verifyNum();
+                                num_line_transfer=stoi(str_num_line_transfer);
+                                if (num_line_transfer == 0 || num_line_transfer > cont_line) cout<<"Ingrese un numero valido de lineas a hacer transferencia"<<endl<<endl;
+                                else{
+                                    this->set_Amount_stations_auxiliar(num_line_transfer);
+                                    while(verify1){
+                                        for (unsigned int k = 0; k < num_line_transfer; k++){
+                                            //verificar que la linea que escriba este disponible para hacer transferencia y que no sea ella misma
+                                            while (true){
+                                                cout<<"Ingrese el nombre de la linea con la que desea hacer transferencia: ";cin>>name_line_transfer;
+                                                name_line_transfer=minus_to_mayus(name_line_transfer);
+                                                if (already_transfer.find(name_line_transfer) != string::npos) {
+                                                    cout<<"Por favor ingrese una linea diferente a hacer transferencia"<<endl;
                                                 }
-                                                break;
+                                                else break;
                                             }
-                                            verify = false;
-                                            verify1 = false;
-                                        }
+                                            if (!this->line_on_red(name_line_transfer) || name_line_transfer == name_line){
+                                                cout<<"Ingrese una linea que se encuentre en la red, recuerde que no puede ser la linea actual"<<endl<<endl;
+                                                k--;
+                                            }
+                                            else{
+                                                //metodo para buscar la linea con la que desea hacer transferencia y agregar la estacion de transferencia
+                                                //llamar metodo que ponga una estacion en una linea en especifico
+                                                this->search_transfer_and_put(name_line_transfer,name_estation);
+                                                line->addStation(name_estation + "linea_" + name_line,i);
+                                                name_estation_same_line += name_estation;
+                                                already_transfer += name_line_transfer;
+                                                verify_estation_transfer = true;
 
+                                                while(i==(num_estations-1)){
+
+                                                    //agregar tiempo entre estaciones
+
+                                                    for(unsigned int i=1;i<(num_estations-1);i+=2){
+
+                                                        cout<<"Ingrese el tiempo (en minutos) que tardara el tren en llegar de la estacion "<<line->get_ptr_line()[i-1]<<" -> "<<line->get_ptr_line()[i+1]<<" : ";
+                                                        time_station=verifyNum();
+                                                        line->addStation(time_station,i);
+                                                    }
+                                                    break;
+
+                                                }
+                                                verify = false;
+                                                verify1 = false;
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
-            else{
-                if (this->normal_estation_on_red(name_estation,this->get_numLines(),valid,name_estation_same_line)) cout<<"Ingrese una estacion que no este repetida"<<endl<<endl;
                 else{
-                    line->addStation(name_estation,i);
+                    if (this->normal_estation_on_red(name_estation,this->get_numLines(),valid,name_estation_same_line)) cout<<"Ingrese una estacion que no este repetida"<<endl<<endl;
+                    else{
+                        line->addStation(name_estation,i);
 
 
-                    name_estation_same_line += name_estation;
-                    verify = false;
-                    valid = true;
-                    if(i==(num_estations-1)){
+                        name_estation_same_line += name_estation;
+                        verify = false;
+                        valid = true;
+                        if(i==(num_estations-1)){
 
-                        //agregar tiempo entre estaciones
+                            //agregar tiempo entre estaciones
 
-                        for(unsigned int i=1;i<(num_estations-1);i+=2){
+                            for(unsigned int i=1;i<(num_estations-1);i+=2){
 
-                            cout<<"Ingrese el tiempo (en minutos)  que tardara el tren en llegar de la estacion "<<line->get_ptr_line()[i-1]<<" -> "<<line->get_ptr_line()[i+1]<<" : ";
-                            time_station=verifyNum();
-                            line->addStation(time_station,i);
+                                cout<<"Ingrese el tiempo (en minutos)  que tardara el tren en llegar de la estacion "<<line->get_ptr_line()[i-1]<<" -> "<<line->get_ptr_line()[i+1]<<" : ";
+                                time_station=verifyNum();
+                                line->addStation(time_station,i);
+                            }
                         }
                     }
                 }
@@ -206,14 +220,20 @@ void network::addLine()
 
 void network::printNetwork(){
     cout << "RED METRO\n\n";
-    for(unsigned int i = 0; i < numLines;i++){
-        cout<<"linea "<<matrixNetwork[i].get_name_line();
-        for(unsigned j = 0; j < (matrixNetwork[i].get_num_estations()*2)-1;j++){
-            cout<<" " <<"|"<<(matrixNetwork[i].get_ptr_line())[j]<<"|";
+    if (numLines == 0){
+        cout<<"La RED METRO esta vacia"<<endl<<endl;
+    }
+    else{
+        for(unsigned int i = 0; i < numLines;i++){
+            cout<<"linea "<<matrixNetwork[i].get_name_line();
+            for(unsigned j = 0; j < (matrixNetwork[i].get_num_estations()*2)-1;j++){
+                cout<<" " <<"|"<<(matrixNetwork[i].get_ptr_line())[j]<<"|";
+            }
+            cout<<endl;
         }
         cout<<endl;
     }
-    cout<<endl;
+
 }
 
 bool network::line_on_red(string name_line)
@@ -351,31 +371,22 @@ void network::amountStations()
 
 void network::deleteLine(string name_line)
 {
-    for(unsigned int i = 0; i < numLines; i++){
-        if (matrixNetwork[i].get_name_line() == name_line){
-            //pasarle un nuevo objeto line invalido
-            line* name_object = new line();
-            if (i == numLines - 1) {
-                matrixNetwork[i] = *name_object;
-                //actualizar atributo
-                numLines--;
-                break;
-            }
-            else{
-                //poner en esa posicion otro objeto vacio e invalido
-                matrixNetwork[i] = *name_object;
-                //tomar la posicion en la cual la encontro
-                for(unsigned int j = i; j < numLines; j++){
-                    //mover los elementos
-                    matrixNetwork[j] = matrixNetwork[j+1];
+    if (numLines == 1){
+        line* name_object = new line();
+        matrixNetwork[0] = *name_object;
+        cout<<"la linea "<<name_line<<" ha sido eliminada"<<endl;
+        //actualizar atributo
+        numLines--;
+    }
+    else{
+        for(unsigned int i = 0; i < numLines; i++){
+            for(unsigned int j = 0; j < getMatrixnetwork()[i].get_num_estations();j+=2){
+                if (matrixNetwork[i].get_name_line() == name_line && getMatrixnetwork()[i].get_ptr_line()[j].find('-') != string::npos){
+                    cout<<"La linea "<<name_line<<" no se ha podido eliminar ya que tiene estaciones de transferencia"<<endl;
                 }
-                //actualizar atributo
-                numLines--;
-                break;
             }
         }
     }
-    cout<<"La linea "<<name_line<<" ha sido eliminada"<<endl;
 
 }
 

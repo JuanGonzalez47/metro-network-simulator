@@ -20,5 +20,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     fun_aux.h \
     line_class.h \
-    network_class.h \
-    virtual_network_class.h
+    network_class.h

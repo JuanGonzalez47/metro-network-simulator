@@ -113,7 +113,6 @@ void menu(){
             while(true){
 
                 char volver;
-
                 //verificar que haya espacio para agregar el elemento
                 if(red.get_numLines()+1>red.getTamMatrixNetwork()){
 
@@ -121,11 +120,10 @@ void menu(){
                     resizeArreglo<line>(red.getMatrixnetwork(),red.getTamMatrixNetwork(),red.getTamMatrixNetwork()+10);//se le suma 10 por la expectativa
                     red.setTamMatrixNetwork(10);//actualizar el tamaño
                 }
-
                 red.addLine();
                 cout<<"la red ha quedado de la siguiente manera: "<<endl<<endl;
                 red.printNetwork();
-                cout<<"Si desea seguir agregando lineas ingrese 1 de lo contrario ingrese cualquier caracter para volver al menu principal: ";cin>>volver;
+                cout<<"Si desea seguir agregando lineas ingrese 1 de lo contrario ingrese cualquier caracter: ";cin>>volver;
                 cout<<endl;
                 if(volver!='1') break;
 
@@ -133,23 +131,30 @@ void menu(){
 
         }else if(op=='4'){
 
-            while(true){
-                if(red.get_numLines() == 1) {
-                    cout<<"No puede eliminar una linea de la red ya que la red solo tiene una linea"<<endl<<endl;
-                    break;
-                }
+
+            bool band1 = true;
+            bool band2 = true;
+            while(band1){
                 char volver;
                 string name_line;
                 cout<<"La red metro es la siguiente: "<<endl<<endl;
                 red.printNetwork();
-                while (true){
+                while (band2){
                     cout<<"Ingrese el nombre de la linea que desea eliminar: ";cin>>name_line;
-                     name_line=minus_to_mayus(name_line);
+                    name_line=minus_to_mayus(name_line);
                     if (red.line_on_red(name_line)){
                         red.deleteLine(name_line);
-                        cout<<"Si desea seguir eliminando lineas ingrese 1 de lo contrario ingrese cualquier caracter para volver al menu principal: ";cin>>volver;
-                        cout<<endl;
-                        if(volver!='1') break;
+                        cout<<"Si desea seguir eliminando lineas ingrese 1 de lo contrario ingrese cualquier caracter: ";cin>>volver;
+                        cout<<endl<<endl;
+                        if(volver!='1'){
+                            band1 = false;
+                            band2 = false;
+                        }
+                    }
+                    else if (red.get_numLines() == 0){
+                        cout<<"No se puede eliminar mas lineas ya que la red esta vacia"<<endl<<endl;
+                        band1 = false;
+                        band2 = false;
                     }
                     else cout<<"Ingrese una linea que se encuentre en la red"<<endl;
                 }
@@ -253,7 +258,6 @@ void menu(){
                     }
 
                 }
-
                 if(first){
                     //ingresarla en la primera posicion
                     line->addStation(name_sta,true);
@@ -275,10 +279,7 @@ void menu(){
             while(band3){
 
                 char volver;
-                unsigned int amount_line_transfer_delete;
-                string str_amount_line_transfer_delete;
                 bool band = true;
-                bool band2 = true;
                 string name_line_transfer_delete;
                 string sta;
                 line* line;
@@ -292,28 +293,7 @@ void menu(){
                         if (!red.getMatrixnetwork()->findStation(sta)) cout<<"Ingrese una estacion que se encuentre en la red"<<endl;
                         else{
                             if (sta.find('-') != string::npos){
-                                while (band2){
-                                    cout<<"Ingrese con cuantas lineas desea eliminar la transferencia: ";
-                                    str_amount_line_transfer_delete=verifyNum();
-                                    amount_line_transfer_delete=stoi(str_amount_line_transfer_delete);
-                                    if (amount_line_transfer_delete == 0 || amount_line_transfer_delete >= red.get_numLines()) cout<<"Ingrese un numero valido de lineas a hacer transferencia";
-                                    else{
-                                        red.set_Amount_stations_auxiliar((-amount_line_transfer_delete + 1));
-                                        for (unsigned int i = 0; i < amount_line_transfer_delete; i++){
-                                            while (true){
-                                                cout<<"Ingrese la linea "<<i+1<<" con la que va a eliminar la transferencia: ";cin>>name_line_transfer_delete;
-                                                name_line_transfer_delete=minus_to_mayus(name_line_transfer_delete);
-                                                if (red.line_on_red(name_line_transfer_delete)){
-                                                    red.getMatrixnetwork()[i].deleteStation(sta + "linea_" + red.getMatrixnetwork()[i].get_name_line());
-                                                    break;
-                                                }
-                                                else cout<<"Ingrese una linea que este en la red"<<endl;
-                                            }
-                                        }
-                                    }
-                                    band = false;
-                                    band2 = false;
-                                }
+                                cout<<"No se puede eliminar una estacion de transferencia"<<endl;   
                             }
                             else{
                                 line->deleteStation(sta);
@@ -323,7 +303,7 @@ void menu(){
                     }
                 }
 
-                cout<<"Si desea seguir eliminando estaciones ingrese 1 de lo contrario ingrese cualquier caracter para volver al menu principal: ";cin>>volver;
+                cout<<"Si desea seguir eliminando estaciones ingrese 1 de lo contrario ingrese cualquier caracter: ";cin>>volver;
                 cout<<endl;
                 if(volver!='1') band3 = false;
 
