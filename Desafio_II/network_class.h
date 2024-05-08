@@ -10,7 +10,6 @@ private:
 
     line *matrixNetwork;
     unsigned int numLines;
-    int *elemLine;
     //Atributo que tomar en cuenta las veces que se repite una estacion de transferencia, esto a tener en cuenta en el metodo amountStations
     unsigned int Amount_stations_auxiliar = 0;
 
@@ -21,6 +20,7 @@ public:
     network();
 
     //destructor
+    ~network();
 
     //metodos
     void inicialization_red();
@@ -35,8 +35,8 @@ public:
     void search_transfer_and_put(string name_line_transfer, string name_estation);
     bool normal_estation_on_red(string name_estation);
 
-    //geters
-    unsigned int get_numLines ();
+    //getters
+    unsigned int get_numLines();
     line* getMatrixnetwork();
 
     //setter

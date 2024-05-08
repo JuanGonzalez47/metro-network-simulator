@@ -43,30 +43,46 @@ bool line::findStation(string sta){
 
 void line::deleteStation(string sta){
 
+
     unsigned int x=0;
 
-    for(unsigned int i=0;i<(num_estations*2)-1;i+=2){
-        x++;
-        if(ptr_line[i]==sta){
-            //sumar tiempo que tenia la estacion a la lado y lado
-            float sumt=stof(ptr_line[i-1])+stof(ptr_line[i+1]);
-
-            ptr_line[i-1]=to_string(sumt);
-            //siguiente estacion
-            ptr_line[i]=ptr_line[i+2];
-            break;
+    if (sta == ptr_line[0]){
+        for(unsigned int j=0;j<(num_estations*2)-1;j++){
+            //correr el resto de valores dos posiciones a la izquierda
+            ptr_line[j]=ptr_line[j+2];
         }
     }
+    else if(sta == ptr_line[(num_estations*2)-2]){
+        ptr_line[(num_estations*2)-2] = "";
+        ptr_line[(num_estations*2)-3] = "";
 
-    for(unsigned int j=x;j<(num_estations*2)-1;j++){
+    }
+    else{
+        for(unsigned int i=0;i<(num_estations*2)-1;i+=2){
+            x++;
+            if(ptr_line[i]==sta){
+                //sumar tiempo que tenia la estacion a la lado y lado
+                float sumt=stof(ptr_line[i-1])+stof(ptr_line[i+1]);
 
-        //correr el resto de valores dos posiciones a la izquierda
-        ptr_line[j]=ptr_line[j+2];
+                ptr_line[i-1]=to_string(sumt);
+                //siguiente estacion
+                ptr_line[i]=ptr_line[i+2];
+                break;
+            }
+        }
 
+        for(unsigned int j=x;j<(num_estations*2)-1;j++){
+
+            //correr el resto de valores dos posiciones a la izquierda
+            ptr_line[j]=ptr_line[j+2];
+
+        }
+        //eliminar las ultimas dos posiciones que quedan sobrando (tiempo-estacion)
+        ptr_line[(num_estations*2)-2] = "";
+        ptr_line[(num_estations*2)-3] = "";
     }
     cout<<"La estacion "<<sta<<" fue eliminada "<<endl;
     num_estations--;
-
 }
 
 void line::amountStations(){
