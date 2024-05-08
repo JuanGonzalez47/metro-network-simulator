@@ -39,7 +39,8 @@ line* verifyLine(network* N){
 
         cout<<endl;
         cout<<"Ingrese el nombre de la linea: ";cin>>name_line;
-        name_line=mayus_to_minus(name_line);
+        name_line=minus_to_mayus(name_line);
+
         cout<<endl;
 
         //verificar que la linea exista y encontrar la linea
@@ -64,9 +65,13 @@ line* verifyLine(network* N){
 
 void menu(){
 
+    string str_lines;
     int lines;
-    cout<<"Bienvenido a la simulacion de una red metro\n";
-    cout<<"Ingrese el numero de lineas que tendra la red metro: ";cin>>lines;///////////////////////////////
+    cout << "Bienvenido a la simulacion de una red metro\n";
+    cout<<"Ingrese el numero de lineas que tendra la red metro: ";
+
+    str_lines = verifyNum();
+    lines=stoi(str_lines);
 
     //instanciar la calse network
 
@@ -108,6 +113,13 @@ void menu(){
             while(true){
 
                 char volver;
+                //verificar que haya espacio para agregar el elemento
+                if(red.get_numLines()+1>red.getTamMatrixNetwork()){
+
+                    // no hay espacio en el arreglo se redimensiona
+                    resizeArreglo<line>(red.getMatrixnetwork(),red.getTamMatrixNetwork(),red.getTamMatrixNetwork()+10);//se le suma 10 por la expectativa
+                    red.setTamMatrixNetwork(10);//actualizar el tamaño
+                }
                 red.addLine();
                 cout<<"la red ha quedado de la siguiente manera: "<<endl<<endl;
                 red.printNetwork();
@@ -129,7 +141,7 @@ void menu(){
                 red.printNetwork();
                 while (band2){
                     cout<<"Ingrese el nombre de la linea que desea eliminar: ";cin>>name_line;
-                    name_line=mayus_to_minus(name_line);
+                    name_line=minus_to_mayus(name_line);
                     if (red.line_on_red(name_line)){
                         red.deleteLine(name_line);
                         cout<<"Si desea seguir eliminando lineas ingrese 1 de lo contrario ingrese cualquier caracter: ";cin>>volver;
@@ -189,6 +201,7 @@ void menu(){
                 string name_sta;
                 while(true){
                     cout<<"Ingrese el nombre de la estacion que desea agregar: ";cin>>name_sta;
+                    name_sta=mayus_to_minus(name_sta);
                     if (red.normal_estation_on_red(name_sta)) cout<<"Ingrese una estacion que no este en la red"<<endl;
                     else break;
                 }
@@ -198,23 +211,17 @@ void menu(){
                 if((line->get_num_estations()*2)+1>line->get_tam_ptr_line()){
                     // no hay espacio en el arreglo lo redimensionar
                     resizeArreglo<string>(line->get_ptr_line(),line->get_tam_ptr_line(),line->get_tam_ptr_line()+29);//se le suma 29 por la expectativa
-                    line->addStation(name_sta,false);
-                    cout<<"estacion "<<name_sta<<" agregada"<<endl;
-
-                }else{
-
-                    if(first){
-                        //ingresarla en la primera posicion
-                        line->addStation(name_sta,true);
-                    }else{
-                        //posicion cualquiera
-                         line->addStation(name_sta,false);
-                    }
+                    line->set_tam_ptr_line(29);//actualizar tamaño
                 }
+
                 while (name_sta.find('-') != string::npos){
+                    string str_amount_line_transfer;
                     unsigned int amount_line_transfer;
                     string name_line_transfer;
-                    cout<<"Ingrese con cuantas lineas desea hacer transferencia: ";cin>>amount_line_transfer;///////////////////////////////7
+                    cout<<"Ingrese con cuantas lineas desea hacer transferencia: ";
+                    str_amount_line_transfer=verifyNum();
+                    amount_line_transfer=stoi(str_amount_line_transfer);
+
                     if (amount_line_transfer == 0 || amount_line_transfer >= red.get_numLines()) cout<<"Ingrese un numero valido de lineas a hacer transferencia";
                     else{
                         red.set_Amount_stations_auxiliar(amount_line_transfer);
@@ -222,7 +229,7 @@ void menu(){
                         for (unsigned int i = 0; i < amount_line_transfer; i++){
                             while (true){
                                 cout<<"Ingrese la linea "<<i+1<<" con la que va a hacer transferencia: ";cin>>name_line_transfer;
-                                 name_line_transfer=mayus_to_minus(name_line_transfer);
+                                 name_line_transfer=minus_to_mayus(name_line_transfer);
 
                                 cout<<"Ingrese 1 si la estacion que desea agregar estara en la primera posicion de la linea de lo contario ingrese cualquier caracter: ";cin>>x;
                                 cout<<endl;
@@ -251,7 +258,15 @@ void menu(){
                     }
 
                 }
-                cout<<"Si desea seguir agregando estaciones ingrese 1 de lo contrario ingrese cualquier caracter: ";cin>>volver;
+                if(first){
+                    //ingresarla en la primera posicion
+                    line->addStation(name_sta,true);
+                }else{
+                    //posicion cualquiera
+                    line->addStation(name_sta,false);
+                }
+
+                cout<<"Si desea seguir agregando estaciones ingrese 1 de lo contrario ingrese cualquier caracter para volver al menu principal: ";cin>>volver;
                 cout<<endl;
                 if(volver!='1') break;
 
@@ -278,7 +293,7 @@ void menu(){
                         if (!red.getMatrixnetwork()->findStation(sta)) cout<<"Ingrese una estacion que se encuentre en la red"<<endl;
                         else{
                             if (sta.find('-') != string::npos){
-                                cout<<"No se puede eliminar una estacion de transferencia"<<endl;
+                                cout<<"No se puede eliminar una estacion de transferencia"<<endl;   
                             }
                             else{
                                 line->deleteStation(sta);

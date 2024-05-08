@@ -38,19 +38,25 @@ public:
     void deleteStation(string sta);
     void timeStations();
 
-    //geters
+    //getters
     string get_name_line();
     string* get_ptr_line();
     unsigned int get_tam_ptr_line();
     unsigned int get_num_estations();
     bool get_object_valid();
 
+    //setters
+    void set_tam_ptr_line(unsigned int tam_);
 };
 
-  //funcion para verificar que una esatcion dada exista
+  //funciones para algunas verificaciones
 
 string verifyStation(line* L,string phrase);
 string mayus_to_minus(string word);
+string minus_to_mayus(string word);
+string verifyNum();
+
+
 
 #endif // LINE_CLASS_H
 

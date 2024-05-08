@@ -96,8 +96,8 @@ void line::addStation(string sta,bool first_pos){
     string time1;
     //si la esatcion sera ingresada en la primera posicion
     if(first_pos){
-        cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[0]<<" : ";
-        cin>>time1;cout<<endl;////////////////////////////////////////////////777
+        cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[0]<<" : "; 
+        time1=verifyNum();
 
         //mover lo elementos dos posiciones hacia la derecha
         for (int i =(num_estations*2);i>=2;i--) {
@@ -117,7 +117,7 @@ void line::addStation(string sta,bool first_pos){
 
         string time2;
         cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<elem<<" a la estacion "<<sta<<" : ";
-        cin>>time1;cout<<endl;///////////////////////////////////////////////7
+        time1=verifyNum();
 
         for(unsigned int i=(num_estations*2)-1;true;i--){
 
@@ -134,7 +134,7 @@ void line::addStation(string sta,bool first_pos){
             if(ptr_line[i-3]==elem){
                 //asignar los nuevos valores
                 cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[i+1]<<" : ";
-                cin>>time2;cout<<endl;///////////////////////////////////////////
+                time2=verifyNum();
                 ptr_line[i]=time2;
                 ptr_line[i-1]=sta;
                 ptr_line[i-2]=time1;
@@ -276,6 +276,11 @@ bool line::get_object_valid()
     return object_valid;
 }
 
+void line::set_tam_ptr_line(unsigned int tam_)
+{
+    tam_ptr_line+=tam_;
+}
+
 
 //destructor
 
@@ -286,23 +291,6 @@ line::~line()
 }
 
 //funcion
-
-string verifyStation(line *L, string phrase) {
-    string temp;
-    string sta;
-    while(true){
-        cout<<"Ingrese "+phrase<<": ";cin>>sta;
-        cout<<endl;
-        if(!L->findStation(sta)){
-            cout<<"La estacion no existe\ningrese otra estacion"<<endl;
-        }else{
-            break;
-        }
-    }
-
-    return sta;
-}
-
 
 string mayus_to_minus(string word){
     //convertir todos los caracters de un string a minuscula esto se hace para que los nombres de las esatciones sean minusculas
@@ -320,3 +308,50 @@ string minus_to_mayus(string word) {
     return word;
 }
 
+string verifyNum(){
+
+    //verifica que la entrada sea un carcater numerico
+    bool out;
+    string num;
+    int ascii;
+    bool iter1=false;
+    while(true){
+        out=true;
+        if(iter1){
+            cout<<"Intente nuevamente: ";cin>>num;
+            cout<<"\n";
+        }else{
+            cin>>num;
+        }
+
+        int len=num.length();
+
+        for(int i=0;i<len;i++){
+            ascii=num[i];
+            if(ascii<48 || ascii>57){
+                cout<<"Solo puede ingresar caracteres numericos\n";
+                iter1=true;
+                out=false;
+                break;
+            }
+        }
+        if(out) break;
+    }
+    return num;
+}
+
+string verifyStation(line *L, string phrase) {
+    string temp;
+    string sta;
+    while(true){
+        cout<<"Ingrese "+phrase<<": ";cin>>sta;
+        cout<<endl;
+        if(!L->findStation(sta)){
+            cout<<"La estacion no existe\ningrese otra estacion"<<endl;
+        }else{
+            break;
+        }
+    }
+
+    return sta;
+}

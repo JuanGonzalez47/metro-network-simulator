@@ -8,6 +8,7 @@ class network
 
 private:
 
+    unsigned int tam_matrix_network;
     line *matrixNetwork;
     unsigned int numLines;
     //Atributo que tomar en cuenta las veces que se repite una estacion de transferencia, esto a tener en cuenta en el metodo amountStations
@@ -38,9 +39,11 @@ public:
     //getters
     unsigned int get_numLines();
     line* getMatrixnetwork();
+    unsigned int getTamMatrixNetwork();
 
     //setter
     void set_Amount_stations_auxiliar(unsigned int new_value);
+    void setTamMatrixNetwork(unsigned int tam_);
 };
 
 
