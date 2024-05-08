@@ -287,7 +287,7 @@ void line::set_tam_ptr_line(unsigned int tam_)
 
 line::~line()
 {
-    delete ptr_line;
+    delete[] ptr_line;
 }
 
 //funcion
