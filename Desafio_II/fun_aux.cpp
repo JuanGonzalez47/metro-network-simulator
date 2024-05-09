@@ -292,7 +292,7 @@ void menu(){
                     while(band){
                         cout<<"Ingrese la estacion que va a eliminar: ";cin>>sta;
                         sta=mayus_to_minus(sta);
-                        if (!red.getMatrixnetwork()->findStation(sta)) cout<<"Ingrese una estacion que se encuentre en la red"<<endl;
+                        if (!line->findStation(sta)) cout<<"Ingrese una estacion que se encuentre en la linea "<<endl;
                         else{
                             if (sta.find('-') != string::npos){
                                 cout<<"No se puede eliminar una estacion de transferencia"<<endl;   
