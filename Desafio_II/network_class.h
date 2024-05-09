@@ -18,7 +18,6 @@ public:
 
     //constructor
     network(unsigned int numLines_);
-    network();
 
     //destructor
     ~network();

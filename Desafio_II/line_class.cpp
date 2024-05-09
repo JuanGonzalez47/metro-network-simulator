@@ -62,7 +62,7 @@ void line::deleteStation(string sta){
             x++;
             if(ptr_line[i]==sta){
                 //sumar tiempo que tenia la estacion a la lado y lado
-                float sumt=stof(ptr_line[i-1])+stof(ptr_line[i+1]);
+                int sumt=stoi(ptr_line[i-1])+stoi(ptr_line[i+1]);
 
                 ptr_line[i-1]=to_string(sumt);
                 //siguiente estacion
@@ -92,7 +92,6 @@ void line::amountStations(){
 }
 
 void line::addStation(string sta,bool first_pos){
-
     string time1;
     //si la esatcion sera ingresada en la primera posicion
     if(first_pos){
