@@ -53,7 +53,6 @@ public:
 
 string verifyStation(line* L,string phrase);
 string mayus_to_minus(string word);
-string minus_to_mayus(string word);
 string verifyNum();
 
 

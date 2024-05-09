@@ -96,8 +96,13 @@ void line::addStation(string sta,bool first_pos){
     string time1;
     //si la esatcion sera ingresada en la primera posicion
     if(first_pos){
-        cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[0]<<" : "; 
-        time1=verifyNum();
+        while (true){
+            cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[0]<<" : ";
+            time1=verifyNum();
+            if (stoi(time1) <= 0) cout<<"Ingrese un tiempo mayor a cero"<<endl;
+            else break;
+        }
+
 
         //mover lo elementos dos posiciones hacia la derecha
         for (int i =(num_estations*2);i>=2;i--) {
@@ -116,8 +121,14 @@ void line::addStation(string sta,bool first_pos){
         elem=verifyStation(this,"despues de cual estacion quiere agregar la nueva (nombre)");
 
         string time2;
-        cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<elem<<" a la estacion "<<sta<<" : ";
-        time1=verifyNum();
+
+        while (true){
+            cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<elem<<" a la estacion "<<sta<<" : ";
+            time1=verifyNum();
+            if (stoi(time1) <= 0) cout<<"Ingrese un tiempo mayor a cero"<<endl;
+            else break;
+        }
+
 
         for(unsigned int i=(num_estations*2)-1;true;i--){
 
@@ -133,8 +144,13 @@ void line::addStation(string sta,bool first_pos){
             //encontro el elmento
             if(ptr_line[i-3]==elem){
                 //asignar los nuevos valores
-                cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[i+1]<<" : ";
-                time2=verifyNum();
+                while (true){
+                    cout<<"Ingrese el tiempo que tardara el tren en llegar de la estacion "<<sta<<" a la estacion "<<ptr_line[i+1]<<" : ";
+                    time2=verifyNum();
+                    if (stoi(time2) <= 0) cout<<"Ingrese un tiempo mayor a cero"<<endl;
+                    else break;
+                }
+
                 ptr_line[i]=time2;
                 ptr_line[i-1]=sta;
                 ptr_line[i-2]=time1;
@@ -159,7 +175,7 @@ void line::timeStations(){
 
 
     string sta1,sta2;
-    float sum_tiempo=0;
+    unsigned int sum_tiempo = 0;
     //para verificar si sta1 se encuetra primero que sta2 en la linea
     bool order=NULL,start_sum=false;
     cout<<"Ingrese las estaciones entre las cuales quiere conocer el tiempo que tarda el tren en llegar "<<endl;
@@ -200,7 +216,7 @@ void line::timeStations(){
                     break;
                 }
                 //i+1 siguiente posicion donde se encuentra el tiempo pasarlo a float
-                sum_tiempo+=stof(ptr_line[i+1]);
+                sum_tiempo+=stoi(ptr_line[i+1]);
             }
 
         }
@@ -220,7 +236,7 @@ void line::timeStations(){
                     break;
                 }
                 //i-1 siguiente posicion donde se encuentra el tiempo pasarlo a float
-                sum_tiempo+=stof(ptr_line[i-1]);
+                sum_tiempo+=stoi(ptr_line[i-1]);
             }
 
         }
@@ -239,15 +255,16 @@ void line::timeStations(){
     // Convierte el tiempo a una forma legible
     tm* tiempoLocal = localtime(&tiempoActual);
 
-    cout<<"Si usted sale de la estacion "<<sta1<<" a las "<<tiempoLocal->tm_hour << ":" << tiempoLocal->tm_min<< endl;
+    cout << "Si usted sale de la estacion " << sta1 << " a las " << tiempoLocal->tm_hour << ":" << tiempoLocal->tm_min << endl;
 
-    tiempoActual+=sum_tiempo;
+    tiempoActual += static_cast<time_t>(sum_tiempo);
 
     tm* tiempoLlegada = localtime(&tiempoActual);
 
-    cout<<"Llegara a la estacion "<<sta2<<" a las "<<tiempoLlegada->tm_hour << ":" << tiempoLlegada->tm_min << endl;
-
+    cout << "Llegara a la estacion " << sta2 << "aproximadamente a las " << tiempoLlegada->tm_hour << ":" << tiempoLlegada->tm_min << endl;
 }
+
+
 
 //getters
 
@@ -300,14 +317,6 @@ string mayus_to_minus(string word){
     return word;
 }
 
-string minus_to_mayus(string word) {
-  //convertir todos los caracters de un string a mayuculas esto se hace para que los nombres de las lineas sean mayusculas
-    for (unsigned int i = 0; i < word.length(); i++) {
-        word[i] = toupper(word[i]);
-    }
-    return word;
-}
-
 string verifyNum(){
 
     //verifica que la entrada sea un carcater numerico
@@ -345,6 +354,7 @@ string verifyStation(line *L, string phrase) {
     string sta;
     while(true){
         cout<<"Ingrese "+phrase<<": ";cin>>sta;
+        sta = mayus_to_minus(sta);
         cout<<endl;
         if(!L->findStation(sta)){
             cout<<"La estacion no existe\ningrese otra estacion"<<endl;
