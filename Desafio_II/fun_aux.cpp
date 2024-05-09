@@ -39,7 +39,7 @@ line* verifyLine(network* N){
 
         cout<<endl;
         cout<<"Ingrese el nombre de la linea: ";cin>>name_line;
-        name_line=minus_to_mayus(name_line);
+        name_line=mayus_to_minus(name_line);
 
         cout<<endl;
 
@@ -57,7 +57,6 @@ line* verifyLine(network* N){
                 end=false;
             }
         }
-
         if(end) break;
     }
     return line;
@@ -141,7 +140,7 @@ void menu(){
                 red.printNetwork();
                 while (band2){
                     cout<<"Ingrese el nombre de la linea que desea eliminar: ";cin>>name_line;
-                    name_line=minus_to_mayus(name_line);
+                    name_line=mayus_to_minus(name_line);
                     if (red.line_on_red(name_line)){
                         red.deleteLine(name_line);
                         cout<<"Si desea seguir eliminando lineas ingrese 1 de lo contrario ingrese cualquier caracter: ";cin>>volver;
@@ -183,6 +182,9 @@ void menu(){
 
 
         }else if(op=='7'){
+
+            cout<<"La red se encuentra de la siguiente manera:"<<endl<<endl;
+            red.printNetwork();
 
             while(true){
                 char volver;
@@ -229,7 +231,7 @@ void menu(){
                         for (unsigned int i = 0; i < amount_line_transfer; i++){
                             while (true){
                                 cout<<"Ingrese la linea "<<i+1<<" con la que va a hacer transferencia: ";cin>>name_line_transfer;
-                                 name_line_transfer=minus_to_mayus(name_line_transfer);
+                                name_line_transfer=mayus_to_minus(name_line_transfer);
 
                                 cout<<"Ingrese 1 si la estacion que desea agregar estara en la primera posicion de la linea de lo contario ingrese cualquier caracter: ";cin>>x;
                                 cout<<endl;
@@ -266,7 +268,7 @@ void menu(){
                     line->addStation(name_sta,false);
                 }
 
-                cout<<"Si desea seguir agregando estaciones ingrese 1 de lo contrario ingrese cualquier caracter para volver al menu principal: ";cin>>volver;
+                cout<<"Si desea seguir agregando estaciones ingrese 1 de lo contrario ingrese cualquier caracter: ";cin>>volver;
                 cout<<endl;
                 if(volver!='1') break;
 
@@ -320,7 +322,13 @@ void menu(){
                 line* line;
                 line=verifyLine(&red);
 
-                line->timeStations();
+                if (line->get_num_estations() <= 1){
+                    cout<<"No puede calcular tiempo entre estaciones ya que solo hay una estacion"<<endl;
+                }
+                else{
+                    line->timeStations();
+                }
+
 
                 cout<<"Si desea conocer mas tiempos entre estaciones en una linea especifica ingrese 1 de lo contrario ingrese cualquier caracter: ";cin>>volver;
                 cout<<endl;
@@ -335,7 +343,7 @@ void menu(){
         char terminar;
 
 
-        cout<<"Si desea volver al menu principal ingrese 1 de lo contrario ingrese cualquier caracter: ";cin>>terminar;
+        cout<<"Si desea volver al menu principal ingrese 1 de lo contrario ingrese cualquier caracter para salir de la red: ";cin>>terminar;
         cout<<endl;
         if(terminar!='1') break;
 
